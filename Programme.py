@@ -7,7 +7,7 @@ pygame.display.set_caption("Bataille Navale")
 
 # Ouvrir une fenêtre Pygame
 taille = largeur, hauteur = 1024,768
-ecran = pygame.display.set_mode((taille),FULLSCREEN)
+ecran = pygame.display.set_mode((taille))
 
 #Initialiser les variables
 Continuer = 0 # Créer la variable Continuer
