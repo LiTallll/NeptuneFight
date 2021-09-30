@@ -129,7 +129,7 @@ torpilleurj2_rect = torpilleurj2_rect.move(749,221)
 Mode = Partie
 actuel = preparation
 action = termine
-pygame.key.set_repeat(1,125)
+pygame.key.set_repeat(250,125)
 pygame.time.Clock().tick(50) # Limiter le nombre de boucles à 50 par seconde
 
 # Ajout des Sons
@@ -167,7 +167,6 @@ while Continuer==0 :
                 print("Logo et Audio par Florentin Heuzé")
             if event.pos[0]>=341 and event.pos[0]<=640 and event.pos[1]>=541 and event.pos[1]<=640 :
                 Continuer=2
-                Intro.stop()
     ecran.blit(Menu,(0,0))
     if Son==True :
         ecran.blit(sonon,(700,350))
