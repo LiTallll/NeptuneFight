@@ -134,11 +134,20 @@ pygame.time.Clock().tick(50) # Limiter le nombre de boucles à 50 par seconde
 
 # Ajout des Sons
 Explosion = pygame.mixer.Sound("Sons/Explosion.wav")
-Intro = pygame.mixer.Sound("Sons/Intro.wav")
+pygame.mixer.music.load("Sons/Intro.wav")
+pygame.mixer.music.set_volume(0.01)
+pygame.mixer.music.play()
+
+def ToggleMusic(Son) :
+    Son = not Son
+    if Son :
+        pygame.mixer.music.play()
+    else :
+        pygame.mixer.music.stop()
+    return Son
 
 #Menu
 while Continuer==0 :
-    Intro.play()
     for event in pygame.event.get():
         if event.type == QUIT:
             Continuer = 2
@@ -151,14 +160,7 @@ while Continuer==0 :
             if event.pos[0]>=339 and event.pos[0]<=638 and event.pos[1]>=260 and event.pos[1]<=359 :
                 Continuer=1
             if event.pos[0]>=700 and event.pos[0]<=854 and event.pos[1]>=350 and event.pos[1]<=508 :
-                if Son==True and clicutilise==0 :
-                    Son=False
-                    Intro.stop()
-                    clicutilise=1
-                if Son==False and clicutilise==0 :
-                    Son=True
-                    Intro.play()
-                    clicutilise=1
+                Son = ToggleMusic(Son)
             if event.pos[0]>=341 and event.pos[0]<=640 and event.pos[1]>=401 and event.pos[1]<=500 :
                 print("Programme par Alistair Lewin")
                 print("Graphismes et Textures par Jordan Ouvrard")
