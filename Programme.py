@@ -3,17 +3,23 @@ import pygame
 from pygame.locals import *
 import pygame.mixer
 pygame.init()
-pygame.display.set_caption("Bataille Navale")
+pygame.display.set_caption("Neptune Fight")
 
 # Ouvrir une fenêtre Pygame
 taille = largeur, hauteur = 1024,768
 ecran = pygame.display.set_mode((taille))
+
+#Constantes : Ces valeurs ne changent pas pendant l'execution du programme et definnissent des parametres immuables
+SquareSize = [51,41]
+MapGap = [[20,236],[593,336]]
+MapSize = [SquareSize[0]*10,SquareSize[1]*10]
 
 #Initialiser les variables
 Continuer = 0
 placement = 1
 joueur = 0
 Hits = [[],[]]
+Misses = [[],[]]
 abstouchej1self = []
 ordtouchej1self = []
 abstouchej2self = []
@@ -147,8 +153,19 @@ def ToggleMusic(Son) :
         pygame.mixer.music.stop()
     return Son
 
-def DisplayHits() :
-    pass
+def DisplayShoot(Abs,Ord) :
+    choixtir_rect=[Abs*SquareSize[0]+MapGap[0][0],Ord*SquareSize[0]+MapGap[0][1],51,51]
+    ecran.blit(choixtir,choixtir_rect)
+
+def DisplayShots() :
+    for i in Hits[joueur] :
+        ecran.blit(touche,(i[0]*SquareSize[0]+MapGap[0][0],i[1]*SquareSize[0]+MapGap[0][1]))
+    for i in Misses[joueur] :
+        ecran.blit(miss,(i[0]*SquareSize[0]+MapGap[0][0],i[1]*SquareSize[0]+MapGap[0][1]))
+    for i in Hits[1-joueur] :
+        ecran.blit(touchesmall,(i[0]*SquareSize[1]+MapGap[1][0],i[1]*SquareSize[1]+MapGap[1][1]))
+    for i in Misses[1-joueur] :
+        ecran.blit(misssmall,(i[0]*SquareSize[1]+MapGap[1][0],i[1]*SquareSize[1]+MapGap[1][1]))
 
 def DisplayBoat(Boat,Abs,Ord,Vert) :
     pass
@@ -463,6 +480,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                             if tir_rect.colliderect(porteavionj2_rect)==1 or tir_rect.colliderect(croiseurj2_rect)==1 or tir_rect.colliderect(sousmarinj2_rect)==1 or tir_rect.colliderect(contretorpij2_rect)==1 or tir_rect.colliderect(torpilleurj2_rect)==1 :
                                 if Son==True :
                                     Explosion.play()
+                                Hits[joueur].append([AbsShoot,OrdShoot])
                                 abstouchej1self.append(saveabstir)
                                 ordtouchej1self.append(saveordtir)
                                 abstouchej2ennemi.append(abscissetir)
@@ -478,38 +496,20 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                                 if tir_rect.colliderect(torpilleurj2_rect)==1 :
                                     PVj2[4]=PVj2[4]-1
                             else :
+                                Misses[joueur].append([AbsShoot,OrdShoot])
                                 absmissj1self.append(saveabstir)
                                 ordmissj1self.append(saveordtir)
                                 absmissj2ennemi.append(abscissetir)
                                 ordmissj2ennemi.append(ordonneetir)
                             tir_rect = tir_rect.move(-abscissetir,-ordonneetir)
-                        if event.pos[0]>20 and event.pos[0]<531 and event.pos[1]>237 and event.pos[1]<747 :
-                            choisi=0
-                            dejatire=0
-                            compteur=0
-                            abscissetir=0
-                            ordonneetir=0
-                            saveabstir=event.pos[0]-20
-                            saveordtir=event.pos[1]-236
-                            while saveabstir-51>0 :
-                                abscissetir=abscissetir+1
-                                saveabstir=saveabstir-51
-                            while saveordtir-51>0 :
-                                ordonneetir=ordonneetir+1
-                                saveordtir=saveordtir-51
-                            saveabstir=(abscissetir*51)+20
-                            saveordtir=(ordonneetir*51)+236
-                            choixtir_rect=[saveabstir,saveordtir,51,51]
-                            while compteur<len(absmissj1self) :
-                                if saveordtir==absmissj1self[compteur] and saveordtir==ordmissj1self[compteur] :
-                                    dejatire=dejatire+1
-                                compteur=compteur+1
-                            compteur=0
-                            while compteur<len(abstouchej1self) :
-                                if saveabstir==abstouchej1self[compteur] and saveordtir==ordtouchej1self[compteur] :
-                                    dejatire=dejatire+1
-                                compteur=compteur+1
-                            if dejatire==0 :
+                        if event.pos[0]>=MapGap[0][0] and event.pos[0]<MapGap[0][0]+MapSize[0] and event.pos[1]>=MapGap[0][1] and event.pos[1]<MapGap[0][1]+MapSize[0] :
+                            AbsShoot = (event.pos[0]-MapGap[0][0])//SquareSize[0]
+                            OrdShoot = (event.pos[1]-MapGap[0][1])//SquareSize[0]
+                            saveabstir = (AbsShoot*51)+20
+                            saveordtir = (OrdShoot*51)+236
+                            if [AbsShoot,OrdShoot] in Hits[joueur] or [AbsShoot,OrdShoot] in Misses[joueur] :
+                                choisi = 0
+                            else :
                                 choisi = 1
             if actuel==defense :
                 for event in pygame.event.get():
@@ -833,7 +833,6 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                                 saveordtir=saveordtir-51
                             saveabstir=(abscissetir*51)+20
                             saveordtir=(ordonneetir*51)+236
-                            choixtir_rect=[saveabstir,saveordtir,51,51]
                             while compteur<len(absmissj2self) :
                                 if saveordtir==absmissj2self[compteur] and saveordtir==ordmissj2self[compteur] :
                                     dejatire=dejatire+1
@@ -901,7 +900,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
             ecran.blit(grille,(20,236))
             ecran.blit(grillesmall,(593,336))
             if choisi==1 :
-                ecran.blit(choixtir,choixtir_rect)
+                DisplayShoot(AbsShoot,OrdShoot)
             if joueur==0 :
                 if PVj1[0]>0 :
                     if Verticalj1[0]==1 :
@@ -929,22 +928,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                     else :
                         ecran.blit(torpilleur,torpilleurj1_rect)
                 ecran.blit(joueur1,(0,0))
-                compteur=0
-                while compteur<len(absmissj1self) :
-                    ecran.blit(miss,(absmissj1self[compteur],ordmissj1self[compteur]))
-                    compteur=compteur+1
-                compteur=0
-                while compteur<len(abstouchej1self) :
-                    ecran.blit(touche,(abstouchej1self[compteur],ordtouchej1self[compteur]))
-                    compteur=compteur+1
-                compteur=0
-                while compteur<len(absmissj1ennemi) :
-                    ecran.blit(misssmall,(absmissj1ennemi[compteur],ordmissj1ennemi[compteur]))
-                    compteur=compteur+1
-                compteur=0
-                while compteur<len(abstouchej1ennemi) :
-                    ecran.blit(touchesmall,(abstouchej1ennemi[compteur],ordtouchej1ennemi[compteur]))
-                    compteur=compteur+1
+                DisplayShots()
             if joueur==1 :
                 if PVj2[0]>0 :
                     if Verticalj2[0]==1 :
