@@ -10,9 +10,10 @@ taille = largeur, hauteur = 1024,768
 ecran = pygame.display.set_mode((taille))
 
 #Initialiser les variables
-Continuer = 0 # Créer la variable Continuer
+Continuer = 0
 placement = 1
-joueur = 1
+joueur = 0
+Hits = [[],[]]
 abstouchej1self = []
 ordtouchej1self = []
 abstouchej2self = []
@@ -146,6 +147,12 @@ def ToggleMusic(Son) :
         pygame.mixer.music.stop()
     return Son
 
+def DisplayHits() :
+    pass
+
+def DisplayBoat(Boat,Abs,Ord,Vert) :
+    pass
+
 #Menu
 while Continuer==0 :
     for event in pygame.event.get():
@@ -162,7 +169,7 @@ while Continuer==0 :
             if event.pos[0]>=700 and event.pos[0]<=854 and event.pos[1]>=350 and event.pos[1]<=508 :
                 Son = ToggleMusic(Son)
             if event.pos[0]>=341 and event.pos[0]<=640 and event.pos[1]>=401 and event.pos[1]<=500 :
-                print("Programme par Alistair Lewin")
+                print("Rework V2 et Programme original par Alistair Lewin (LiTall)")
                 print("Graphismes et Textures par Jordan Ouvrard")
                 print("Logo et Audio par Florentin Heuzé")
             if event.pos[0]>=341 and event.pos[0]<=640 and event.pos[1]>=541 and event.pos[1]<=640 :
@@ -177,7 +184,7 @@ while Continuer==0 :
 
 #Boucle principale
 while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj2[1]+PVj2[2]+PVj2[3]+PVj2[4]>0 :
-        if joueur==1 :
+        if joueur==0 :
             if actuel==preparation and j1pret==0 :
                 for event in pygame.event.get():
                     if event.type == QUIT:
@@ -364,7 +371,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                             if placement==5 :
                                 actuel = changementj2
                                 placement=0
-                                joueur = 0
+                                joueur = -1
                                 j1pret = 1
                             if placement==4 :
                                 placement=5
@@ -511,7 +518,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                     if event.type == KEYDOWN:
                         if event.key == K_ESCAPE:
                             Continuer = 0
-        if joueur==2 :
+        if joueur==1 :
             if actuel==preparation and j2pret==0 :
                 for event in pygame.event.get():
                     if event.type == QUIT:
@@ -698,7 +705,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                             if placement==5 :
                                 actuel = changementj1
                                 placement=0
-                                joueur = 0
+                                joueur = -1
                                 j2pret = 1
                             if placement==4 :
                                 placement=5
@@ -853,7 +860,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                     if event.key == K_ESCAPE:
                         Continuer = 0
                 if event.type == MOUSEBUTTONDOWN and event.button == 1 :
-                    joueur = 2
+                    joueur = 1
                     if j2pret==0 :
                         actuel = preparation
                         placement=1
@@ -867,7 +874,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                     if event.key == K_ESCAPE:
                         Continuer = 0
                 if event.type == MOUSEBUTTONDOWN and event.button == 1 :
-                    joueur = 1
+                    joueur = 0
                     if j1pret==0 :
                         actuel = preparation
                     if j1pret==1 :
@@ -895,7 +902,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
             ecran.blit(grillesmall,(593,336))
             if choisi==1 :
                 ecran.blit(choixtir,choixtir_rect)
-            if joueur==1 :
+            if joueur==0 :
                 if PVj1[0]>0 :
                     if Verticalj1[0]==1 :
                         ecran.blit(porteavionVertical,porteavionj1_rect)
@@ -938,7 +945,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                 while compteur<len(abstouchej1ennemi) :
                     ecran.blit(touchesmall,(abstouchej1ennemi[compteur],ordtouchej1ennemi[compteur]))
                     compteur=compteur+1
-            if joueur==2 :
+            if joueur==1 :
                 if PVj2[0]>0 :
                     if Verticalj2[0]==1 :
                         ecran.blit(porteavionVertical,porteavionj2_rect)
@@ -981,7 +988,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                 while compteur<len(abstouchej2ennemi) :
                     ecran.blit(touchesmall,(abstouchej2ennemi[compteur],ordtouchej2ennemi[compteur]))
                     compteur=compteur+1
-            if joueur==1 :
+            if joueur==0 :
                 if PVj1[0]==0 :
                     if Verticalj1[0]==1 :
                         ecran.blit(pavdeadsmall,porteavionj1_rect)
@@ -1032,7 +1039,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                         ecran.blit(tvdead,(((((torpilleurj2_rect.left)-593)/41)*51)+20,((((torpilleurj2_rect.top)-336)/41)*51)+236))
                     else :
                         ecran.blit(tdead,(((((torpilleurj2_rect.left)-593)/41)*51)+20,((((torpilleurj2_rect.top)-336)/41)*51)+236))
-            if joueur==2 :
+            if joueur==1 :
                 if PVj2[0]==0 :
                     if Verticalj2[0]==1 :
                         ecran.blit(pavdeadsmall,porteavionj2_rect)
