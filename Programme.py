@@ -42,7 +42,7 @@ absbateauxj2 = [593,593,593,593,593]
 ordbateauxj2 = [336,336,336,336,336]
 j1pret = 0
 j2pret = 0
-choisi = 0
+choisi = False
 Collisions = 0
 clicutilise = 0
 PVj1 = [5,4,3,3,2]
@@ -145,6 +145,7 @@ pygame.mixer.music.load("Sons/Intro.wav")
 pygame.mixer.music.set_volume(0.01)
 pygame.mixer.music.play()
 
+#Sound Functions
 def ToggleMusic(Son) :
     Son = not Son
     if Son :
@@ -153,6 +154,7 @@ def ToggleMusic(Son) :
         pygame.mixer.music.stop()
     return Son
 
+#Display Functions
 def DisplayShoot(Abs,Ord) :
     choixtir_rect=[Abs*SquareSize[0]+MapGap[0][0],Ord*SquareSize[0]+MapGap[0][1],51,51]
     ecran.blit(choixtir,choixtir_rect)
@@ -169,6 +171,10 @@ def DisplayShots() :
 
 def DisplayBoat(Boat,Abs,Ord,Vert) :
     pass
+
+#Input Functions
+def IsEventOnBoard(position) :
+    return(position[0]>=MapGap[0][0] and position[0]<MapGap[0][0]+MapSize[0] and position[1]>=MapGap[0][1] and position[1]<MapGap[0][1]+MapSize[0])
 
 #Menu
 while Continuer==0 :
@@ -471,9 +477,9 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                         if event.key == K_ESCAPE:
                             Continuer=0
                     if event.type == MOUSEBUTTONDOWN and event.button == 1 :
-                        if event.pos[0]>=824 and event.pos[0]<=1004 and event.pos[1]>=85 and event.pos[1]<=135 and choisi==1 :
+                        if event.pos[0]>=824 and event.pos[0]<=1004 and event.pos[1]>=85 and event.pos[1]<=135 and choisi==True :
                             actuel = changementj2
-                            choisi = 0
+                            choisi = False
                             abscissetir=(((saveabstir-20)/51)*41)+593
                             ordonneetir=(((saveordtir-236)/51)*41)+336
                             tir_rect = tir_rect.move(abscissetir,ordonneetir)
@@ -502,22 +508,12 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                                 absmissj2ennemi.append(abscissetir)
                                 ordmissj2ennemi.append(ordonneetir)
                             tir_rect = tir_rect.move(-abscissetir,-ordonneetir)
-                        if event.pos[0]>=MapGap[0][0] and event.pos[0]<MapGap[0][0]+MapSize[0] and event.pos[1]>=MapGap[0][1] and event.pos[1]<MapGap[0][1]+MapSize[0] :
+                        if IsEventOnBoard(event.pos) :
                             AbsShoot = (event.pos[0]-MapGap[0][0])//SquareSize[0]
                             OrdShoot = (event.pos[1]-MapGap[0][1])//SquareSize[0]
                             saveabstir = (AbsShoot*51)+20
                             saveordtir = (OrdShoot*51)+236
-                            if [AbsShoot,OrdShoot] in Hits[joueur] or [AbsShoot,OrdShoot] in Misses[joueur] :
-                                choisi = 0
-                            else :
-                                choisi = 1
-            if actuel==defense :
-                for event in pygame.event.get():
-                    if event.type == QUIT:
-                        Continuer = 0
-                    if event.type == KEYDOWN:
-                        if event.key == K_ESCAPE:
-                            Continuer = 0
+                            choisi = not ([AbsShoot,OrdShoot] in Hits[joueur] or [AbsShoot,OrdShoot] in Misses[joueur])
         if joueur==1 :
             if actuel==preparation and j2pret==0 :
                 for event in pygame.event.get():
@@ -788,9 +784,9 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                         if event.key == K_ESCAPE :
                             Continuer=0
                     if event.type == MOUSEBUTTONDOWN and event.button == 1 :
-                        if event.pos[0]>=824 and event.pos[0]<=1004 and event.pos[1]>=85 and event.pos[1]<=135 and choisi==1 :
+                        if event.pos[0]>=824 and event.pos[0]<=1004 and event.pos[1]>=85 and event.pos[1]<=135 and choisi==True :
                             actuel = changementj1
-                            choisi = 0
+                            choisi = False
                             abscissetir=(((saveabstir-20)/51)*41)+593
                             ordonneetir=(((saveordtir-236)/51)*41)+336
                             tir_rect = tir_rect.move(abscissetir,ordonneetir)
@@ -818,7 +814,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                                 ordmissj1ennemi.append(ordonneetir)
                             tir_rect = tir_rect.move(-abscissetir,-ordonneetir)
                         if event.pos[0]>20 and event.pos[0]<531 and event.pos[1]>237 and event.pos[1]<747 :
-                            choisi=0
+                            choisi = False
                             dejatire=0
                             compteur=0
                             abscissetir=0
@@ -843,14 +839,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                                     dejatire=dejatire+1
                                 compteur=compteur+1
                             if dejatire==0 :
-                                choisi = 1
-            if actuel==defense :
-                for event in pygame.event.get():
-                    if event.type == QUIT:
-                        Continuer = 0
-                    if event.type == KEYDOWN:
-                        if event.key == K_ESCAPE:
-                            Continuer = 0
+                                choisi = True
         if actuel==changementj2 :
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -899,7 +888,7 @@ while Continuer==1 and PVj1[0]+PVj1[1]+PVj1[2]+PVj1[3]+PVj1[4]>0 and PVj2[0]+PVj
                 ecran.blit(tirer,(824,85))
             ecran.blit(grille,(20,236))
             ecran.blit(grillesmall,(593,336))
-            if choisi==1 :
+            if choisi==True :
                 DisplayShoot(AbsShoot,OrdShoot)
             if joueur==0 :
                 if PVj1[0]>0 :
